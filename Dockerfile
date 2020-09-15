@@ -3,6 +3,8 @@ FROM debian:buster
 
 LABEL MAINTAINER="Mateo Tascon Gomez"
 
+ENV AUTOINDEX=off
+
 #Update some components
 
 RUN apt-get update && \
@@ -45,7 +47,7 @@ COPY ./srcs/wp-config.php /var/www/html/wordpress/
 RUN apt-get -y install openssl && \
 	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=SP/ST=Spain/L=Madrid/O=42/CN=127.0.0.1" -keyout /etc/ssl/private/matascon.key -out /etc/ssl/certs/matascon.crt && \
 	chmod 700 /etc/ssl/private && \
-	openssl dhparam -out /etc/nginx/dhparam.pem 1000
+	openssl dhparam -out /etc/nginx/dhparam.pem 1000  
 
 #Link site
 
@@ -62,4 +64,5 @@ RUN service mysql start && \
 
 #Run services
 
-ENTRYPOINT service nginx start && service php7.3-fpm start && service mysql start && bash
+ENTRYPOINT	if [ ${AUTOINDEX} == "on" ] ; then sed -i '23 s/autoindex off;/autoindex on;g' /etc/nginx/sites-available/config_server; fi && \
+			service nginx start && service php7.3-fpm start && service mysql start && bash
