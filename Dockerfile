@@ -64,5 +64,5 @@ RUN service mysql start && \
 
 #Run services
 
-ENTRYPOINT	if [ ${AUTOINDEX} == "on" ] ; then sed -i '23 s/autoindex off;/autoindex on;g' /etc/nginx/sites-available/config_server; fi && \
+ENTRYPOINT	if [ ${AUTOINDEX} = "on" ] ; then sed -i '23 s/autoindex off;/autoindex on;/g' /etc/nginx/sites-available/config_server; fi && \
 			service nginx start && service php7.3-fpm start && service mysql start && bash
